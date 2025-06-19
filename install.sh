@@ -4,13 +4,20 @@ set -euo pipefail
 
 # Require root privileges
 if [ "${EUID:-$(id -u)}" -ne 0 ]; then
-    # prefer sudo if installed
     if command -v sudo >/dev/null 2>&1; then
-        exec sudo bash "$0" "$@"
-    # otherwise prompt for the root password via su
+        # if stdin is a terminal, we must be running a file;
+        # if stdin is not a terminal (pipe), use -s
+        if [ -t 0 ]; then
+            exec sudo bash "$0" "$@"
+        else
+            exec sudo bash -s -- "$@"
+        fi
     else
-        echo "Please enter root password to continue:"
-        exec su -c "bash '$0' $*"
+        if [ -t 0 ]; then
+            exec su -c "bash '$0' $*"
+        else
+            exec su -c "bash -s -- $*"
+        fi
     fi
 fi
 
