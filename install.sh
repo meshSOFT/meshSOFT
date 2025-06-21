@@ -20,7 +20,7 @@ if [ "${EUID:-$(id -u)}" -ne 0 ]; then
         if [ -t 0 ]; then
             exec su -c "bash '$0' $*"
         else
-            exec su -c "bash -s -- $*"
+            exec su -c "bash -s -- '$0' $*"
         fi
     fi
 fi
