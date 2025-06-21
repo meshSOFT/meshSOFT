@@ -5,17 +5,18 @@
 
 set -euo pipefail
 
-# Require root privileges
+# Require sudo privileges
 if [ "${EUID:-$(id -u)}" -ne 0 ]; then
-    if command -v sudo >/dev/null 2>&1; then
-        # if stdin is a terminal, we must be running a file;
-        # if stdin is not a terminal (pipe), use -s
+    echo "This script needs sudo privilege to install system packages and services."
+    if id -nG "$USER" | grep -qw sudo; then      
+        echo "Please enter your password:"
         if [ -t 0 ]; then
             exec sudo bash "$0" "$@"
         else
             exec sudo bash -s -- "$@"
         fi
     else
+        echo "Please enter your root password:"
         if [ -t 0 ]; then
             exec su -c "bash '$0' $*"
         else
