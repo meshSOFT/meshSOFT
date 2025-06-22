@@ -9,19 +9,15 @@ set -euo pipefail
 if [ "${EUID:-$(id -u)}" -ne 0 ]; then
     echo "This script needs sudo privilege to install system packages and services."
     if id -nG "$USER" | grep -qw sudo; then      
-        echo "Please enter your password:"
+        echo "Enter your password to continue:"
         if [ -t 0 ]; then
             exec sudo bash "$0" "$@"
         else
             exec sudo bash -s -- "$@"
         fi
     else
-        echo "Please enter your root password:"
-        if [ -t 0 ]; then
-            exec su -c "bash '$0' $*"
-        else
-            exec su -c "bash -s -- $*" </dev/tty
-        fi
+        echo "Please run this script again as root user. Exit."
+        exit 1
     fi
 fi
 
