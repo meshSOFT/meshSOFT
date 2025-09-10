@@ -80,7 +80,7 @@ mkdir -p /opt/shared/meshsoft_userdata/fs
 
 echo "4.2. Download meshSOFT ..."
 MESHSOFT_INSTALLER_PATH="/opt/shared/meshsoft_installer/latest_version"
-MESHSOFT_VERSION_CODE="fMyoyekF29qFMsz"
+MESHSOFT_VERSION_CODE="Kn3sgfwje852kAN"
 case "$ARCH" in
     x86_64)
         echo "x86_64"
