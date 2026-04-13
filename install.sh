@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # MESHSOFT INSTALLATION SCRIPT
-# curl -fsSL https://bit.ly/get-meshsoft | bash
-# wget -qO- https://bit.ly/get-meshsoft | bash
+# curl -fsSL https://bit.ly/get-meshsoft | bash -s -- MESHSOFT_VERSION_CODE
+# wget -qO- https://bit.ly/get-meshsoft | bash -s -- MESHSOFT_VERSION_CODE
 
 set -euo pipefail
 
@@ -80,7 +80,7 @@ mkdir -p /opt/shared/meshsoft_userdata/fs
 
 echo "4.2. Download meshSOFT ..."
 MESHSOFT_INSTALLER_PATH="/opt/shared/meshsoft_installer/latest_version"
-MESHSOFT_VERSION_CODE="bHGtLWFFmxSq5eA"
+MESHSOFT_VERSION_CODE="${1:-5ZoFEnw5bpFFSTE}"
 case "$ARCH" in
     x86_64)
         echo "x86_64"
