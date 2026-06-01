@@ -1,16 +1,23 @@
 #!/usr/bin/env bash
 # MESHSOFT INSTALLATION SCRIPT
+# curl -fsSL https://bit.ly/get-meshsoft | bash -s -- MESHSOFT_VERSION_CODE
+# wget -qO- https://bit.ly/get-meshsoft | bash -s -- MESHSOFT_VERSION_CODE
+
 set -euo pipefail
 
-# Require root privileges
+# Require sudo privileges
 if [ "${EUID:-$(id -u)}" -ne 0 ]; then
-    # prefer sudo if installed
-    if command -v sudo >/dev/null 2>&1; then
-        exec sudo bash "$0" "$@"
-    # otherwise prompt for the root password via su
+    echo "This script needs sudo privilege to install system packages and services."
+    if id -nG "$USER" | grep -qw sudo; then      
+        echo "Enter your password to continue:"
+        if [ -t 0 ]; then
+            exec sudo bash "$0" "$@"
+        else
+            exec sudo bash -s -- "$@"
+        fi
     else
-        echo "Please enter root password to continue:"
-        exec su -c "bash '$0' $*"
+        echo "Please run this script again as root user. Exit."
+        exit 1
     fi
 fi
 
@@ -73,17 +80,17 @@ mkdir -p /opt/shared/meshsoft_userdata/fs
 
 echo "4.2. Download meshSOFT ..."
 MESHSOFT_INSTALLER_PATH="/opt/shared/meshsoft_installer/latest_version"
-MESHSOFT_VERSION_CODE="SMtbwaSkQspZ8ZJ"
+MESHSOFT_VERSION_CODE="${1:-XXXX}"
 case "$ARCH" in
     x86_64)
         echo "x86_64"
-        curl -u "$MESHSOFT_VERSION_CODE:any" -H "X-Requested-With: XMLHttpRequest" "https://share.mesh-tech.de/public.php/webdav/ReleaseNotes.txt" -o $MESHSOFT_INSTALLER_PATH/ReleaseNotes.txt
-        curl -u "$MESHSOFT_VERSION_CODE:any" -H "X-Requested-With: XMLHttpRequest" "https://share.mesh-tech.de/public.php/webdav/meshsoft_installer.zip" -o $MESHSOFT_INSTALLER_PATH/meshsoft_installer.zip
+        curl -u "$MESHSOFT_VERSION_CODE:any" -H "X-Requested-With: XMLHttpRequest" "https://share.mesh-tech.de/public.php/webdav/amd64/ReleaseNotes.txt" -o $MESHSOFT_INSTALLER_PATH/ReleaseNotes.txt
+        curl -u "$MESHSOFT_VERSION_CODE:any" -H "X-Requested-With: XMLHttpRequest" "https://share.mesh-tech.de/public.php/webdav/amd64/meshsoft_installer.zip" -o $MESHSOFT_INSTALLER_PATH/meshsoft_installer.zip
         ;;
     aarch64)
         echo "aarch64"
-        curl -u "$MESHSOFT_VERSION_CODE:any" -H "X-Requested-With: XMLHttpRequest" "https://share.mesh-tech.de/public.php/webdav/aarch64/ReleaseNotes.txt" -o $MESHSOFT_INSTALLER_PATH/ReleaseNotes.txt
-        curl -u "$MESHSOFT_VERSION_CODE:any" -H "X-Requested-With: XMLHttpRequest" "https://share.mesh-tech.de/public.php/webdav/aarch64/meshsoft_installer.zip" -o $MESHSOFT_INSTALLER_PATH/meshsoft_installer.zip
+        curl -u "$MESHSOFT_VERSION_CODE:any" -H "X-Requested-With: XMLHttpRequest" "https://share.mesh-tech.de/public.php/webdav/arm64/ReleaseNotes.txt" -o $MESHSOFT_INSTALLER_PATH/ReleaseNotes.txt
+        curl -u "$MESHSOFT_VERSION_CODE:any" -H "X-Requested-With: XMLHttpRequest" "https://share.mesh-tech.de/public.php/webdav/arm64/meshsoft_installer.zip" -o $MESHSOFT_INSTALLER_PATH/meshsoft_installer.zip
         ;;
     *)
         echo "Unsupported architecture: $ARCH" >&2
@@ -100,5 +107,5 @@ cd $MESHSOFT_INSTALLER_PATH && rm -rf meshsoft_installer
 
 echo ""
 echo "#################################################################################"
-echo "DONE. To get started, go to: http://localhost:9000"
+echo "DONE. To get started, go to: http://$HOSTNAME.local:9000"
 
